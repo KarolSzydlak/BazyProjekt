@@ -61,7 +61,7 @@ namespace BazyProjekt.Repositories
             }
             return result;
         }
-        //Zmienia atrybutu active alterType określa czy konto ma byc aktywowane czy deaktywowane///
+        //Zmienia atrybutu active alterType określa czy konto ma byc aktywowane czy deaktywowane////
         private Boolean alterUser(String name, NpgsqlConnection con, bool alterType)
         {
             Boolean result = false;
