@@ -29,20 +29,30 @@ namespace BazyProjekt
             //String name = client.Username;
             String idCheck = "SELECT id_user FROM PASSWD WHERE username = 'user'";
             //string login = "SELECT register('t','1234');";
-            string login = "INSERT INTO comments(id_event, content, id_user) VALUES (36, 'swietna sprawa', 7);";
+            //string login = "INSERT INTO comments(id_event, content, id_user) VALUES (36, 'swietna sprawa', 7);";
+            string cm = "SELECT * FROM comments WHERE id_event = 30";
             Boolean l = true;
             //pid check
             int pid = 2000;
             String name = "a";
-            var cmd = new NpgsqlCommand(login, con);
+            var cmd = new NpgsqlCommand(cm, con);
             Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            int idc, ide, idu;
+            idc = ide = idu = 0;
+            string cont =" ";
             while (rdr.Read())
             {
-                l = rdr.GetBoolean(0);
-                //pid = rdr.GetInt32(0);
+                idc = rdr.GetInt32(0);
+                ide = rdr.GetInt32(1);
+                cont = rdr.GetString(2);
+                idu = rdr.GetInt32(3);
+                Console.WriteLine(idc);
+                Console.WriteLine(ide);
+                Console.WriteLine(cont);
+                Console.WriteLine(idu);
             }
             //Console.ReadLine();
-            Console.WriteLine(l);
+            
             int a = 1;
 
         }

@@ -12,6 +12,12 @@ namespace BazyProjekt.Repositories
     internal class BaseRepository
     {
         
+        private void establishCon(NpgsqlConnection con)
+        {
+            var cs = @"User ID=szymon;Password=NHY3ooK9arUzQuIt;Host=frog01.mikr.us;Port=20960;Database=eventsdb";
+            con.Open();
+        }
+
         //reg to rejestrowanie zwraca true jesli wpisano rekord do passwd
         private Boolean reg(String username, String passwd, NpgsqlConnection con)
         {
@@ -109,7 +115,7 @@ namespace BazyProjekt.Repositories
             }
             return result;
         }
-        //wyszukiwanie po dacie i miejscu DO DOKOŃCZENIA
+        //wyszukiwanie po dacie i miejscu 
         private void searchEvent(List<Event> ev, String name, Int32 id_address, DateTime start, DateTime end,
             TimeSpan duration, Int32 category_id, Int32 id_org, String description, NpgsqlConnection con)
         {
@@ -129,6 +135,23 @@ namespace BazyProjekt.Repositories
                 e.Id_org = rdr.GetInt32(6);
                 e.Description = rdr.GetString(7);
                 ev.Add(e);
+
+            }
+            rdr.Close();
+        }
+        private void loadComments(List<Comment> comments, Int32 id_event, NpgsqlConnection con)
+        {
+            String ld = "SELECT * FROM comments WHERE id_event = " + id_event + ";";
+            var cmd = new NpgsqlCommand(ld, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                Comment cm = new Comment();
+                cm.Id_comment = rdr.GetInt32(0);
+                cm.Id_event = rdr.GetInt32(1);
+                cm.Content = rdr.GetString(2);
+                cm.Id_user = rdr.GetInt32(3);
+                comments.Add(cm);
 
             }
             rdr.Close();
