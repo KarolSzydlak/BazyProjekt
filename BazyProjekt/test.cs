@@ -11,7 +11,7 @@ namespace BazyProjekt
 {
     internal class test
     {
-        static void Main(string[] args)
+        /*static void Main(string[] args)
         {
             var sql = "select pg_backend_pid();";
             var cs = @"User ID=szymon;Password=NHY3ooK9arUzQuIt;Host=frog01.mikr.us;Port=20960;Database=eventsdb";
@@ -25,12 +25,12 @@ namespace BazyProjekt
              {
                  Console.WriteLine(rdr.GetInt32(0));
              }
-             Console.ReadLine();*/
+             Console.ReadLine();
             //String name = client.Username;
             String idCheck = "SELECT id_user FROM PASSWD WHERE username = 'user'";
             //string login = "SELECT register('t','1234');";
             //string login = "INSERT INTO comments(id_event, content, id_user) VALUES (36, 'swietna sprawa', 7);";
-            string cm = "SELECT * FROM comments WHERE id_event = 30";
+            string cm = "SELECT * FROM saved where id_user = 5";
             Boolean l = true;
             //pid check
             int pid = 2000;
@@ -44,18 +44,18 @@ namespace BazyProjekt
             {
                 idc = rdr.GetInt32(0);
                 ide = rdr.GetInt32(1);
-                cont = rdr.GetString(2);
-                idu = rdr.GetInt32(3);
+                //cont = rdr.GetString(2);
+                //idu = rdr.GetInt32(3);
                 Console.WriteLine(idc);
                 Console.WriteLine(ide);
-                Console.WriteLine(cont);
-                Console.WriteLine(idu);
+                //Console.WriteLine(cont);
+                //Console.WriteLine(idu);
             }
             //Console.ReadLine();
             
             int a = 1;
 
-        }
+        }*/
 
     }
 }

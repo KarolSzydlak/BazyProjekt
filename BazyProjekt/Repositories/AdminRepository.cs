@@ -75,6 +75,19 @@ namespace BazyProjekt.Repositories
             }
             return result;
         }
+        private Boolean addCategory(String name, NpgsqlConnection con)
+        {
+            Boolean result = false;
+            int rowsAffected;
+            String upd = "INSERT INTO category(name) VALUES('" + name + "');";
+            var cmd = new NpgsqlCommand(upd, con);
+            rowsAffected = cmd.ExecuteNonQuery();
+            if (rowsAffected > 0)
+            {
+                result = true;
+            }
+            return result;
+        }
     }
 }
 

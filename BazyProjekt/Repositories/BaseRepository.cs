@@ -2,8 +2,11 @@
 using Npgsql;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,14 +15,16 @@ namespace BazyProjekt.Repositories
     internal class BaseRepository
     {
         
-        private void establishCon(NpgsqlConnection con)
+        public void establishCon(NpgsqlConnection con)
         {
+            
             var cs = @"User ID=szymon;Password=NHY3ooK9arUzQuIt;Host=frog01.mikr.us;Port=20960;Database=eventsdb";
+            con = new NpgsqlConnection(cs);
             con.Open();
         }
 
         //reg to rejestrowanie zwraca true jesli wpisano rekord do passwd
-        private Boolean reg(String username, String passwd, NpgsqlConnection con)
+        public Boolean reg(String username, String passwd, NpgsqlConnection con)
         {
             
             bool result = false;
@@ -38,9 +43,9 @@ namespace BazyProjekt.Repositories
             
         }
         // po logowaniu trzeba utworzyć masterminda przypisanego do klienta aby mógł zamieszczać wydarzenia
-        private Client login(String username, String passwd, NpgsqlConnection con)
+        public Client login(String username, String passwd, NpgsqlConnection con)
         {
-            Client cl = null;
+            Client cl = new Client();
             bool result = false;
             // hashowanie hasla przed stringiem???
             String login = "SELECT login('" + username + "','" + passwd + "');";
@@ -155,6 +160,46 @@ namespace BazyProjekt.Repositories
 
             }
             rdr.Close();
+        }
+        //zapisanie wydarzenia
+        private Boolean save(Int32 id_user,Int32 id_event, NpgsqlConnection con)
+        {
+            bool result = false;
+            int rowsAffected = 0;
+            String ins = "INSERT INTO saved(id_user, id_event) VALUES(" + id_user.ToString() + "," + id_event.ToString() +");";
+            var cmd = new NpgsqlCommand(ins, con);
+            rowsAffected = cmd.ExecuteNonQuery();
+            if(rowsAffected > 0)
+            {
+                result = true;
+            }
+            return result;
+        }
+        private Boolean deleteSaved(Int32 id_user, Int32 id_event, NpgsqlConnection con)
+        {
+            bool result = false;
+            int rowsAffected = 0;
+            String ins = "DELETE FROM saved WHERE id_user = " + id_user.ToString() + " AND id_event = " + id_event.ToString() + ";";
+            var cmd = new NpgsqlCommand(ins, con);
+            rowsAffected = cmd.ExecuteNonQuery();
+            if (rowsAffected > 0)
+            {
+                result = true;
+            }
+            return result;
+        }
+        private Boolean createMastermind(String name, Int32 id_address, Int32 id_user, NpgsqlConnection con)
+        {
+            bool result = false;
+            int rowsAffected = 0;
+            String str = "INSERT INTO mastermind(name,id_address,id_user) VALUES('" + name + "'," + id_address + "," + id_user + ");";
+            var cmd = new NpgsqlCommand(str, con);
+            rowsAffected = cmd.ExecuteNonQuery();
+            if (rowsAffected > 0)
+            {
+                result = true;
+            }
+            return result;
         }
     }
 }
