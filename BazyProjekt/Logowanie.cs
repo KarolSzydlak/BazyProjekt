@@ -19,7 +19,7 @@ namespace BazyProjekt
         BaseRepository repository;
         String name;
         String password;
-        Boolean regResult;
+        Boolean regResult = false;
         NpgsqlConnection con;
         public Logowanie()
         {
@@ -44,7 +44,10 @@ namespace BazyProjekt
             //repository.establishCon(con);
             name = usernameField.Text;
             password = passField.Text;
-            client = repository.login(name,password,con);
+            if (!String.IsNullOrEmpty(name) || !String.IsNullOrEmpty(password))
+            {
+                client = repository.login(name, password, con);
+            }
             if (client.Logged == false)
             {
                 msgLbl.Text = "Błędna nazwa lub hasło";
@@ -70,9 +73,17 @@ namespace BazyProjekt
             //repository.establishCon(con);
             name = usernameField.Text;
             password = passField.Text;
-            regResult = repository.reg(name,password,con);
+            if (!String.IsNullOrEmpty(name) || !String.IsNullOrEmpty(password))
+            {
+                regResult = repository.reg(name, password, con);
+            }
+            else
+            {
+                msgLbl.Text = "Błędna nazwa lub hasło";
+            }
             if (!regResult)
             {
+                if(msgLbl.Text!= "Błędna nazwa lub hasło")
                 msgLbl.Text = "Nazwa jest zajęta";
             }
             else
