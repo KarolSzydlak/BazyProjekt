@@ -46,6 +46,7 @@ namespace BazyProjekt.Repositories
         public Client login(String username, String passwd, NpgsqlConnection con)
         {
             Client cl = new Client();
+            cl.IsMastermind = false;
             bool result = false;
             // hashowanie hasla przed stringiem???
             String login = "SELECT login('" + username + "','" + passwd + "');";

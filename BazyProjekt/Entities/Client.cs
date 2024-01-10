@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace BazyProjekt.Entities
 {
@@ -17,6 +18,9 @@ namespace BazyProjekt.Entities
         private Boolean active { get; set; }
         private Int32 session_id;
         public Int32 Session_id { get { return session_id; } set { session_id = value; } }
+
+        private Boolean isMastermind;
+        public Boolean IsMastermind { get { return isMastermind; } set { isMastermind = value; } }
 
         private Boolean logged = false;
         public Boolean Logged { get { return logged; } set { logged = value; } }
