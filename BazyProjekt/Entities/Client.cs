@@ -15,6 +15,7 @@ namespace BazyProjekt.Entities
         private String username;
         public String Username { get { return username; } set { username = value; } }
         private String password { get; set; }
+        public String Password { get { return password; } set { password = value; } }
         private Boolean active { get; set; }
         private Int32 session_id;
         public Int32 Session_id { get { return session_id; } set { session_id = value; } }

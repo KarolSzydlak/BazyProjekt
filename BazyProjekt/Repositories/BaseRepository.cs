@@ -9,12 +9,27 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Reflection.Emit;
 
 namespace BazyProjekt.Repositories
 {
     internal class BaseRepository
     {
-        
+        public static byte[] GetHash(string inputString)
+        {
+            using (HashAlgorithm algorithm = SHA256.Create())
+                return algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString));
+        }
+
+        public static string GetHashString(string inputString)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in GetHash(inputString))
+                sb.Append(b.ToString("X2"));
+
+            return sb.ToString();
+        }
         public void establishCon(NpgsqlConnection con)
         {
             
@@ -28,6 +43,7 @@ namespace BazyProjekt.Repositories
         {
             
             bool result = false;
+            passwd = GetHashString(passwd);
             // hashowanie hasla przed stringiem???
             String login = "SELECT register('" + username + "','" + passwd + "');";
             var cmd = new NpgsqlCommand(login, con);
@@ -48,6 +64,7 @@ namespace BazyProjekt.Repositories
             Client cl = new Client();
             cl.IsMastermind = false;
             bool result = false;
+            passwd = GetHashString(passwd);
             // hashowanie hasla przed stringiem???
             String login = "SELECT login('" + username + "','" + passwd + "');";
             var cmd = new NpgsqlCommand(login, con);
@@ -57,29 +74,52 @@ namespace BazyProjekt.Repositories
                 result = rdr.GetBoolean(0);
 
             }
-            if(result == true)
-            {
+            if (result == true)
+                cl.Logged = true;
+            /*{
                 cl.Username = username;
                 String getAT = "SELECT id_user FROM PASSWD WHERE username = '" + username + "';";
                 cmd = new NpgsqlCommand(getAT, con);
-                rdr = cmd.ExecuteReader();
-                while (rdr.Read())
+                Npgsql.NpgsqlDataReader pbrd = cmd.ExecuteReader();
+                while (pbrd.Read())
                 {
-                    cl.Id = rdr.GetInt32(0);
+                    cl.Id = pbrd.GetInt32(0);
                 }
+                pbrd.Close();
                 String pid = "SELECT pb_backend_pid();";
                 cmd = new NpgsqlCommand(pid, con);
-                rdr = cmd.ExecuteReader();
-                while (rdr.Read())
+                Npgsql.NpgsqlDataReader pidr = cmd.ExecuteReader();
+                while (pidr.Read())
                 {
                     cl.Session_id = rdr.GetInt32(0);
                 }
                 cl.Logged = true;
-            }
+                pidr.Close();
+            }*/
             rdr.Close();
             return cl;
         }
-        private Boolean postComment(Client cl, Int32 id_event, String content, NpgsqlConnection con)
+        public void logOut(String name, String passwd, NpgsqlConnection con)
+        {
+            passwd = GetHashString(passwd);
+            String lg = "SELECT logout('" + name + "','" + passwd + "');";
+            var cmd = new NpgsqlCommand(lg, con);
+            cmd.ExecuteNonQuery();
+        }
+        public Int32 getUserId(String name, NpgsqlConnection con)
+        {
+            Int32 userId = -1;
+            String sel = "SELECT id_user FROM passwd WHERE username = '" + name + "';";
+            var cmd = new NpgsqlCommand(sel, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                userId = rdr.GetInt32(0);
+            }
+            rdr.Close();
+            return userId;
+        }
+        public Boolean postComment(Client cl, Int32 id_event, String content, NpgsqlConnection con)
         {
             if(cl.Logged == false)
             {
@@ -101,7 +141,7 @@ namespace BazyProjekt.Repositories
             }
             return result;
         }
-        private Boolean postEvent(Mastermind ms, String name, Int32 id_address, DateTime dt, TimeSpan ts, Int32 category_id,
+        public Boolean postEvent(Mastermind ms, String name, Int32 id_address, DateTime dt, TimeSpan ts, Int32 category_id,
             Int32 id_org, String description, NpgsqlConnection con)
         {
             bool result = false;
@@ -122,7 +162,7 @@ namespace BazyProjekt.Repositories
             return result;
         }
         //wyszukiwanie po dacie i miejscu 
-        private void searchEvent(List<Event> ev, String name, Int32 id_address, DateTime start, DateTime end,
+        public void searchEvent(List<Event> ev, String name, Int32 id_address, DateTime start, DateTime end,
             TimeSpan duration, Int32 category_id, Int32 id_org, String description, NpgsqlConnection con)
         {
             String res = "Select * FROM events WHERE date < " + "'" + end + "'" + "and date > " + "'" + start + "'" +
@@ -145,7 +185,7 @@ namespace BazyProjekt.Repositories
             }
             rdr.Close();
         }
-        private void loadComments(List<Comment> comments, Int32 id_event, NpgsqlConnection con)
+        public void loadComments(List<Comment> comments, Int32 id_event, NpgsqlConnection con)
         {
             String ld = "SELECT * FROM comments WHERE id_event = " + id_event + ";";
             var cmd = new NpgsqlCommand(ld, con);
@@ -163,7 +203,7 @@ namespace BazyProjekt.Repositories
             rdr.Close();
         }
         //zapisanie wydarzenia
-        private Boolean save(Int32 id_user,Int32 id_event, NpgsqlConnection con)
+        public Boolean save(Int32 id_user,Int32 id_event, NpgsqlConnection con)
         {
             bool result = false;
             int rowsAffected = 0;
@@ -176,7 +216,7 @@ namespace BazyProjekt.Repositories
             }
             return result;
         }
-        private Boolean deleteSaved(Int32 id_user, Int32 id_event, NpgsqlConnection con)
+        public Boolean deleteSaved(Int32 id_user, Int32 id_event, NpgsqlConnection con)
         {
             bool result = false;
             int rowsAffected = 0;
@@ -189,7 +229,7 @@ namespace BazyProjekt.Repositories
             }
             return result;
         }
-        private Boolean createMastermind(String name, Int32 id_address, Int32 id_user, NpgsqlConnection con)
+        public Boolean createMastermind(String name, Int32 id_address, Int32 id_user, NpgsqlConnection con)
         {
             bool result = false;
             int rowsAffected = 0;

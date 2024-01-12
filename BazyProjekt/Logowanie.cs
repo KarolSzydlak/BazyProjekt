@@ -47,11 +47,22 @@ namespace BazyProjekt
             if (!String.IsNullOrEmpty(name) || !String.IsNullOrEmpty(password))
             {
                 client = repository.login(name, password, con);
+                
             }
             if (client.Logged == false)
             {
                 msgLbl.Text = "Błędna nazwa lub hasło";
             }
+            else
+            {
+                client.Id = repository.getUserId(name,con);
+                client.Username = name;
+
+            }
+            client.Password = password;
+            
+            repository.logOut(name, client.Password, con);
+          
             con.Close();
         }
 
@@ -90,6 +101,9 @@ namespace BazyProjekt
             {
                 msgLbl.Text = "Zarejestrowano poprawnie";
             }
+           
+            repository.logOut(client.Username, client.Password, con);
+           
             con.Close();
         }
     }
