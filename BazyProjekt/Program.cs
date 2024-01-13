@@ -19,7 +19,7 @@ namespace BazyProjekt
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new KlientMenu());
+            Application.Run(new Logowanie());
         }
     }
 }

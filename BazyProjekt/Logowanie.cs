@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -64,6 +65,19 @@ namespace BazyProjekt
             repository.logOut(name, client.Password, con);
           
             con.Close();
+            if(client.Logged == true)
+            {
+                KlientMenu kMenu = new KlientMenu(client.Username,client.Id,true);
+                //kMenu.Show(); 
+                //Application.Run(new KlientMenu(client.Username,client.Id));
+                Thread thread = new Thread(() => Application.Run(kMenu))
+                {
+                    IsBackground = false
+                };
+                thread.Start();
+                this.Dispose();
+               
+            }
         }
 
 
@@ -102,7 +116,7 @@ namespace BazyProjekt
                 msgLbl.Text = "Zarejestrowano poprawnie";
             }
            
-            repository.logOut(client.Username, client.Password, con);
+            //repository.logOut(client.Username, client.Password, con);
            
             con.Close();
         }

@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
 using System.Reflection.Emit;
+using System.Data;
+using System.Windows.Forms;
 
 namespace BazyProjekt.Repositories
 {
@@ -32,7 +34,7 @@ namespace BazyProjekt.Repositories
         }
         public void establishCon(NpgsqlConnection con)
         {
-            
+
             var cs = @"User ID=szymon;Password=NHY3ooK9arUzQuIt;Host=frog01.mikr.us;Port=20960;Database=eventsdb";
             con = new NpgsqlConnection(cs);
             con.Open();
@@ -41,7 +43,7 @@ namespace BazyProjekt.Repositories
         //reg to rejestrowanie zwraca true jesli wpisano rekord do passwd
         public Boolean reg(String username, String passwd, NpgsqlConnection con)
         {
-            
+
             bool result = false;
             passwd = GetHashString(passwd);
             // hashowanie hasla przed stringiem???
@@ -51,12 +53,12 @@ namespace BazyProjekt.Repositories
             while (rdr.Read())
             {
                 result = rdr.GetBoolean(0);
-                
+
             }
 
             rdr.Close();
             return result;
-            
+
         }
         // po logowaniu trzeba utworzyć masterminda przypisanego do klienta aby mógł zamieszczać wydarzenia
         public Client login(String username, String passwd, NpgsqlConnection con)
@@ -121,7 +123,7 @@ namespace BazyProjekt.Repositories
         }
         public Boolean postComment(Client cl, Int32 id_event, String content, NpgsqlConnection con)
         {
-            if(cl.Logged == false)
+            if (cl.Logged == false)
             {
                 return false;
             }
@@ -130,7 +132,7 @@ namespace BazyProjekt.Repositories
             String ins = "INSERT INTO comments(id_event, id_user, content) VALUES " +
                 "(" + id_event.ToString() + "," + cl.Id.ToString() + ",'" + content + "');";
             var cmd = new NpgsqlCommand(ins, con);
-             rowsAffected = cmd.ExecuteNonQuery();
+            rowsAffected = cmd.ExecuteNonQuery();
             if (rowsAffected == -1)
             {
                 result = false;
@@ -185,32 +187,33 @@ namespace BazyProjekt.Repositories
             }
             rdr.Close();
         }
-        public void loadComments(List<Comment> comments, Int32 id_event, NpgsqlConnection con)
+        public DataTable loadComments(DataTable comments, Int32 id_event, NpgsqlConnection con)
         {
-            String ld = "SELECT * FROM comments WHERE id_event = " + id_event + ";";
+            String ld = "SELECT passwd.username, comments.content FROM comments JOIN passwd ON comments.id_user = passwd.id_user JOIN events " +
+                "ON comments.id_event = events.id_event where events.id_event = " + id_event;
             var cmd = new NpgsqlCommand(ld, con);
             Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())
             {
-                Comment cm = new Comment();
-                cm.Id_comment = rdr.GetInt32(0);
-                cm.Id_event = rdr.GetInt32(1);
-                cm.Content = rdr.GetString(2);
-                cm.Id_user = rdr.GetInt32(3);
-                comments.Add(cm);
+                DataRow row;
+                row = comments.NewRow();
+                row["Nazwa użytkownika"] = rdr.GetString(0);
+                row["Komentarz"] = rdr.GetString(1);
+                comments.Rows.Add(row);
 
             }
             rdr.Close();
+            return comments;
         }
         //zapisanie wydarzenia
-        public Boolean save(Int32 id_user,Int32 id_event, NpgsqlConnection con)
+        public Boolean save(Int32 id_user, Int32 id_event, NpgsqlConnection con)
         {
             bool result = false;
             int rowsAffected = 0;
-            String ins = "INSERT INTO saved(id_user, id_event) VALUES(" + id_user.ToString() + "," + id_event.ToString() +");";
+            String ins = "INSERT INTO saved(id_user, id_event) VALUES(" + id_user.ToString() + "," + id_event.ToString() + ");";
             var cmd = new NpgsqlCommand(ins, con);
             rowsAffected = cmd.ExecuteNonQuery();
-            if(rowsAffected > 0)
+            if (rowsAffected > 0)
             {
                 result = true;
             }
@@ -241,6 +244,99 @@ namespace BazyProjekt.Repositories
                 result = true;
             }
             return result;
+        }
+        public DataTable FillDG(String name, String mName, String cityName, String catName, DateTime startDate, DateTime endDate,
+            NpgsqlConnection con, DataTable dt)
+        {
+            
+            Boolean firstAppend = true;
+            String selName = "and events.name = '" + name + "' ";
+            String selmName = "and mastermind.name = '" + mName + "' ";
+            String selCity = "and city.name = '" + cityName + "' ";
+            String selCat = "and category.name = '" + catName + "' ";
+            String startDateS = startDate.ToString("yyyy-MM-dd HH:mm:ss");
+            String endDateS = endDate.ToString("yyyy-MM-dd HH:mm:ss");
+
+            String sql = "SELECT events.name, mastermind.name,city.name, street.name, address.building_nr, address.apartment_nr, events.date, events.description " +
+                    "FROM events JOIN address ON events.id_address = address.id_address " +
+                    "JOIN city ON city.id_city = address.id_city " +
+                    "JOIN mastermind ON events.id_org = mastermind.id_org " +
+                    "JOIN street on address.id_street = street.id_street " +
+                    "JOIN category ON events.category_id = category.id_category " +
+                    "WHERE date < '" + endDateS + "' and date > '" + startDateS + "' ";
+
+            if (!String.IsNullOrEmpty(name))
+            {
+                sql += selName;
+            }
+            if (!String.IsNullOrEmpty(mName))
+            {
+                sql += selmName;
+            }
+            if (!String.IsNullOrEmpty(cityName))
+            {
+                sql += selCity;
+            }
+            if (!String.IsNullOrEmpty(catName))
+            {
+                sql += selCat;
+            }
+            sql += ";";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            DataRow row;
+            while (rdr.Read())
+            {
+                row = dt.NewRow();
+                row["Nazwa wydarzenia"] = rdr.GetString(0);
+                row["Nazwa organizatora"] = rdr.GetString(1);
+                row["Miasto"] = rdr.GetString(2);
+                row["Ulica"] = rdr.GetString (3);
+                row["Nr. budynku"] = rdr.GetInt32 (4);
+                row["Nr. lokalu"] = rdr.GetInt32(5);
+                row["Data"] = rdr.GetDateTime(6);
+                row["Opis"] = rdr.GetString(7);
+                dt.Rows.Add(row);
+
+            }
+            return dt;
+        }
+        public List<String> getCities(List<String> dt, NpgsqlConnection con)
+        {
+            String sql = "SELECT name FROM city;";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                dt.Add(rdr.GetString(0));
+            }
+            return dt;
+        }
+        public List<String> getCategories(List<String> dt, NpgsqlConnection con)
+        {
+           
+            String sql = "SELECT name FROM category;";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                dt.Add(rdr.GetString(0));
+            }
+            return dt;
+        }
+        public Int32 getEventId(String eName, String mName, String date, NpgsqlConnection con)
+        {
+            Int32 eId = -1;
+            String sql = "SELECT id_event FROM events JOIN mastermind on events.id_org = mastermind.id_org WHERE " +
+                "events.name = '" + eName + "' " + "and mastermind.name = '" + mName + "' and events.date = '" + date + "';";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                eId = rdr.GetInt32(0);
+            }
+            rdr.Close();
+            return eId;
         }
     }
 }

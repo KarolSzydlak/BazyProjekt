@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BazyProjekt.Repositories
 {
-    internal class AdminRepository:BaseRepository
+    internal class AdminRepository : BaseRepository
     {
         private Boolean addCity(String name, NpgsqlConnection con)
         {

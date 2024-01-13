@@ -114,6 +114,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="PostComment.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PostComment.Designer.cs">
+      <DependentUpon>PostComment.cs</DependentUpon>
+    </Compile>
     <Compile Include="KlientMenu.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -137,6 +143,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Logowanie.resx">
       <DependentUpon>Logowanie.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PostComment.resx">
+      <DependentUpon>PostComment.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
