@@ -190,7 +190,7 @@ namespace BazyProjekt.Repositories
         public DataTable loadComments(DataTable comments, Int32 id_event, NpgsqlConnection con)
         {
             String ld = "SELECT passwd.username, comments.content FROM comments JOIN passwd ON comments.id_user = passwd.id_user JOIN events " +
-                "ON comments.id_event = events.id_event where events.id_event = " + id_event;
+                "ON comments.id_event = events.id_event where events.id_event = " + id_event + ";";
             var cmd = new NpgsqlCommand(ld, con);
             Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
             while (rdr.Read())

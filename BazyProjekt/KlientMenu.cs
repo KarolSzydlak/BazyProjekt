@@ -185,28 +185,35 @@ namespace BazyProjekt
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+            if(e.RowIndex > -1)
             {
-                dataGridView1.CurrentRow.Selected = true;
-                selectedEventName = dataGridView1.Rows[e.RowIndex].Cells["Nazwa wydarzenia"].Value.ToString();
-                selectedMasterName = dataGridView1.Rows[e.RowIndex].Cells["Nazwa organizatora"].Value.ToString();
-                selectedCity = dataGridView1.Rows[e.RowIndex].Cells["Miasto"].Value.ToString();
-                selectedStreet = dataGridView1.Rows[e.RowIndex].Cells["Ulica"].Value.ToString();
-                selectedDescription = dataGridView1.Rows[e.RowIndex].Cells["Opis"].Value.ToString();
-                selectedBuilding = dataGridView1.Rows[e.RowIndex].Cells["Nr. budynku"].Value.ToString();
-                selectedApartment = dataGridView1.Rows[e.RowIndex].Cells["Nr. lokalu"].Value.ToString();
-                selectedDate = dataGridView1.Rows[e.RowIndex].Cells["Data"].Value.ToString();
-                DateTime dateS = DateTime.Parse(selectedDate);
-                selectedDate = dateS.ToString("yyyy-MM-dd HH:mm:ss");
-                
+                if (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value != null)
+                {
+                    dataGridView1.CurrentRow.Selected = true;
+                    selectedEventName = dataGridView1.Rows[e.RowIndex].Cells["Nazwa wydarzenia"].Value.ToString();
+                    selectedMasterName = dataGridView1.Rows[e.RowIndex].Cells["Nazwa organizatora"].Value.ToString();
+                    selectedCity = dataGridView1.Rows[e.RowIndex].Cells["Miasto"].Value.ToString();
+                    selectedStreet = dataGridView1.Rows[e.RowIndex].Cells["Ulica"].Value.ToString();
+                    selectedDescription = dataGridView1.Rows[e.RowIndex].Cells["Opis"].Value.ToString();
+                    selectedBuilding = dataGridView1.Rows[e.RowIndex].Cells["Nr. budynku"].Value.ToString();
+                    selectedApartment = dataGridView1.Rows[e.RowIndex].Cells["Nr. lokalu"].Value.ToString();
+                    selectedDate = dataGridView1.Rows[e.RowIndex].Cells["Data"].Value.ToString();
+                    DateTime dateS = DateTime.Parse(selectedDate);
+                    selectedDate = dateS.ToString("yyyy-MM-dd HH:mm:ss");
 
+
+                }
             }
+            
         }
         //Przeglądanie komentarzy
         private void button5_Click(object sender, EventArgs e)
         {
             if (!browsingComments)
             {
+                con.Open();
+                selectedID = repository.getEventId(selectedEventName, selectedMasterName, selectedDate, con);
+                con.Close();
                 comments.Clear();
                 backBTNvisibility = true;
                 showBTN();
@@ -230,6 +237,15 @@ namespace BazyProjekt
             showBTN();
             dataGridView1.Columns.Clear();
             dataGridView1.DataSource = dt;
+            dataGridView1.Columns[7].Width =
+               dataGridView1.Width
+               - dataGridView1.Columns[0].Width
+               - dataGridView1.Columns[1].Width
+               - dataGridView1.Columns[2].Width
+               - dataGridView1.Columns[3].Width
+               - dataGridView1.Columns[4].Width
+               - dataGridView1.Columns[5].Width
+               - dataGridView1.Columns[6].Width;
             comments.Clear();
         }
 
