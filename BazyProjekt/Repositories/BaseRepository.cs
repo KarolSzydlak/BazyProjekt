@@ -13,6 +13,7 @@ using System.Security.Cryptography;
 using System.Reflection.Emit;
 using System.Data;
 using System.Windows.Forms;
+using Npgsql.Internal.Postgres;
 
 namespace BazyProjekt.Repositories
 {
@@ -143,13 +144,13 @@ namespace BazyProjekt.Repositories
             }
             return result;
         }
-        public Boolean postEvent(Mastermind ms, String name, Int32 id_address, DateTime dt, TimeSpan ts, Int32 category_id,
+        public Boolean postEvent(String name, Int32 id_address, String dt, Int32 category_id,
             Int32 id_org, String description, NpgsqlConnection con)
         {
             bool result = false;
             int rowsAffected = 0;
-            String ins = "INSERT INTO events(name, id_address, date, duration, category_id, id_org,description) VALUES " +
-                "('" + name + "'," + id_address.ToString() + "," + dt + "," + ts + "," + category_id.ToString() + "," +
+            String ins = "INSERT INTO events(name, id_address, date, category_id, id_org,description) VALUES " +
+                "('" + name + "'," + id_address.ToString() + ",'" + dt + "'," + category_id.ToString() + "," +
                 id_org.ToString() + ",'" + description + "');";
             var cmd = new NpgsqlCommand(ins, con);
             rowsAffected = cmd.ExecuteNonQuery();
@@ -312,6 +313,17 @@ namespace BazyProjekt.Repositories
             }
             return dt;
         }
+        public List<String> getStreets(List<String> dt, NpgsqlConnection con)
+        {
+            String sql = "SELECT name FROM street;";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                dt.Add(rdr.GetString(0));
+            }
+            return dt;
+        }
         public List<String> getCategories(List<String> dt, NpgsqlConnection con)
         {
            
@@ -338,5 +350,95 @@ namespace BazyProjekt.Repositories
             rdr.Close();
             return eId;
         }
+        public Boolean checkMastermind(String name, NpgsqlConnection con)
+        {
+            String res = null;
+            String sql = "SELECT name FROM mastermind WHERE name = '" + name + "';";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                res = rdr.GetString(0);
+            }
+            rdr.Close();
+            if (res == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        public Boolean checkIfMaster(Int32 id, NpgsqlConnection con)
+        {
+            String name = null;
+            String sql = "SELECT name FROM mastermind WHERE id_user = " + id.ToString() + ";";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                name = rdr.GetString(0);
+            }
+            rdr.Close();
+            if (name == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        public Boolean createAddress(Int32 id_city, Int32 id_street, Int32 apartment_id, Int32 building_nr, NpgsqlConnection con)
+        {
+            bool result = false;
+            int rowsAffected = -1;
+            String sql = "INSERT INTO address(id_city,id_street,apartment_nr,building_nr) VALUES(" + id_city.ToString() + "," + id_street.ToString() + "," + apartment_id.ToString() + "," + building_nr.ToString() + ");";
+            var cmd = new NpgsqlCommand(sql, con);
+            rowsAffected = cmd.ExecuteNonQuery();
+            if (rowsAffected > 0)
+            {
+                result = true;
+            }
+            return result;
+        }
+        public Int32 getAddressId(Int32 id_city, Int32 id_street, Int32 apartment_id, Int32 building_nr, NpgsqlConnection con)
+        {
+            int addr = -1;
+            String sql = "SELECT id_address from address where id_city = " + id_city.ToString() + " and id_street = " + id_street.ToString() + " and apartment_nr = " + apartment_id.ToString() + " and building_nr = " + building_nr.ToString() + ";";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                addr = rdr.GetInt32(0);
+            }
+            return addr;
+        }
+        public Int32 getIdOrg(Int32 id_user, NpgsqlConnection con)
+        {
+            int addr = -1;
+            String sql = "Select id_org FROM passwd join mastermind on mastermind.id_user = passwd.id_user where passwd.id_user = " + id_user.ToString() + ";";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                addr = rdr.GetInt32(0);
+            }
+            return addr;
+        }
+        public Int32 getOrgAdd(Int32 id_user, NpgsqlConnection con)
+        {
+            int addr = -1;
+            String sql = "Select id_address FROM passwd join mastermind on passwd.id_user = mastermind.id_user where passwd.id_user = " + id_user.ToString() + ";";
+            var cmd = new NpgsqlCommand(sql, con);
+            Npgsql.NpgsqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                addr = rdr.GetInt32(0);
+            }
+            return addr;
+        }
     }
 }
+

@@ -65,9 +65,16 @@ namespace BazyProjekt
             repository.logOut(name, client.Password, con);
           
             con.Close();
+
+
+
+
+            con.Open();
+            client.IsMastermind = repository.checkIfMaster(client.Id,con);
+            con.Close();
             if(client.Logged == true)
             {
-                KlientMenu kMenu = new KlientMenu(client.Username,client.Id,true);
+                KlientMenu kMenu = new KlientMenu(client.Username,client.Id,true,client.IsMastermind);
                 //kMenu.Show(); 
                 //Application.Run(new KlientMenu(client.Username,client.Id));
                 Thread thread = new Thread(() => Application.Run(kMenu))

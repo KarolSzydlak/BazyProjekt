@@ -34,13 +34,14 @@ namespace BazyProjekt
         Int32 selectedID;
         Boolean backBTNvisibility = false;
         Boolean browsingComments = false;
-        public KlientMenu(String name, Int32 id, Boolean logged)
+        public KlientMenu(String name, Int32 id, Boolean logged, Boolean isMastermind)
         {
             InitializeComponent();
             client = new Client();
             client.Username = name;
             client.Id = id;
             client.Logged = logged;
+            client.IsMastermind = isMastermind;
             repository = new BaseRepository();
             var cs = @"User ID=szymon;Password=NHY3ooK9arUzQuIt;Host=frog01.mikr.us;Port=20960;Database=eventsdb";
             con = new NpgsqlConnection(cs);
@@ -90,6 +91,14 @@ namespace BazyProjekt
             uComment.ColumnName = "Komentarz";
             comments.Columns.Add(uName);
             comments.Columns.Add(uComment);
+            con.Open();
+            client.IsMastermind = repository.checkIfMaster(client.Id, con);
+            con.Close();
+            if (client.IsMastermind)
+            {
+                button7.Hide();
+            }
+
 
             categories = new List<string>();
             cities = new List<string>();
@@ -209,7 +218,8 @@ namespace BazyProjekt
         //Przeglądanie komentarzy
         private void button5_Click(object sender, EventArgs e)
         {
-            if (!browsingComments)
+            label9.Text = "";
+            if (!browsingComments&&selectedEventName!=null)
             {
                 con.Open();
                 selectedID = repository.getEventId(selectedEventName, selectedMasterName, selectedDate, con);
@@ -227,6 +237,9 @@ namespace BazyProjekt
                 con.Close();
                 browsingComments = true;
             }
+            else
+            {
+                label9.Text = "Należy najpierw wybrać wydarzenie!";            }
             
         }
 
@@ -251,20 +264,56 @@ namespace BazyProjekt
 
         private void postCommentBTN_Click(object sender, EventArgs e)
         {
-            con.Open();
-            selectedID = repository.getEventId(selectedEventName, selectedMasterName, selectedDate, con);
-            con.Close();
-            PostComment pc = new PostComment(selectedID, client.Id, client.Logged, selectedEventName);
-            Thread thread = new Thread(() => Application.Run(pc))
+            label9.Text = "";
+            if (selectedEventName != null)
             {
-                IsBackground = false
-            };
-            thread.Start();
+                con.Open();
+                selectedID = repository.getEventId(selectedEventName, selectedMasterName, selectedDate, con);
+                con.Close();
+                PostComment pc = new PostComment(selectedID, client.Id, client.Logged, selectedEventName);
+                Thread thread = new Thread(() => Application.Run(pc))
+                {
+                    IsBackground = false
+                };
+                thread.Start();
+            }
+            else
+            {
+                label9.Text = "Należy najpierw wybrać wydarzenie!";
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
             this.Dispose();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if(client.IsMastermind == false)
+            {
+                CreateMaster cm = new CreateMaster(client.Username, client.Id);
+                Thread th = new Thread(() => Application.Run(cm))
+                { IsBackground = false };
+                th.Start();
+                client.IsMastermind = true;
+                button7.Hide();
+            }
+            
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            con.Open();
+            Int32 id_org = repository.getIdOrg(client.Id,con);
+            con.Close();
+            con.Open();
+            Int32 addressID = repository.getOrgAdd(client.Id, con);
+            con.Close();
+            PostEvent pe = new PostEvent(id_org,addressID);
+            Thread the = new Thread(() => Application.Run(pe))
+            { IsBackground = false };
+            the.Start();
         }
     }
 }

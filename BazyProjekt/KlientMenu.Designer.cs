@@ -39,9 +39,6 @@
             this.CategoryBox = new System.Windows.Forms.ComboBox();
             this.dateBox = new System.Windows.Forms.DateTimePicker();
             this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.disComm = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
@@ -53,6 +50,8 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.bckBTN = new System.Windows.Forms.Button();
             this.postCommentBTN = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -152,44 +151,11 @@
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // button2
-            // 
-            this.button2.BackColor = System.Drawing.SystemColors.HotTrack;
-            this.button2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button2.Location = new System.Drawing.Point(3, 17);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(101, 34);
-            this.button2.TabIndex = 12;
-            this.button2.Text = "Konto";
-            this.button2.UseVisualStyleBackColor = false;
-            // 
-            // button3
-            // 
-            this.button3.BackColor = System.Drawing.SystemColors.HotTrack;
-            this.button3.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button3.Location = new System.Drawing.Point(3, 59);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(101, 34);
-            this.button3.TabIndex = 13;
-            this.button3.Text = "Statystyki";
-            this.button3.UseVisualStyleBackColor = false;
-            // 
-            // button4
-            // 
-            this.button4.BackColor = System.Drawing.SystemColors.HotTrack;
-            this.button4.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button4.Location = new System.Drawing.Point(3, 99);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(101, 34);
-            this.button4.TabIndex = 14;
-            this.button4.Text = "Zapisane";
-            this.button4.UseVisualStyleBackColor = false;
-            // 
             // disComm
             // 
             this.disComm.BackColor = System.Drawing.SystemColors.HotTrack;
             this.disComm.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.disComm.Location = new System.Drawing.Point(3, 252);
+            this.disComm.Location = new System.Drawing.Point(12, 191);
             this.disComm.Name = "disComm";
             this.disComm.Size = new System.Drawing.Size(101, 34);
             this.disComm.TabIndex = 15;
@@ -201,7 +167,7 @@
             // 
             this.button6.BackColor = System.Drawing.SystemColors.HotTrack;
             this.button6.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button6.Location = new System.Drawing.Point(3, 139);
+            this.button6.Location = new System.Drawing.Point(3, 8);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(101, 34);
             this.button6.TabIndex = 16;
@@ -213,12 +179,13 @@
             // 
             this.button7.BackColor = System.Drawing.SystemColors.HotTrack;
             this.button7.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.button7.Location = new System.Drawing.Point(3, 179);
+            this.button7.Location = new System.Drawing.Point(3, 48);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(101, 34);
             this.button7.TabIndex = 0;
             this.button7.Text = "Zostań organizatorem";
             this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // endDate
             // 
@@ -239,7 +206,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 216);
+            this.label7.Location = new System.Drawing.Point(12, 162);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(198, 13);
             this.label7.TabIndex = 19;
@@ -277,7 +244,7 @@
             // 
             this.bckBTN.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.bckBTN.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.bckBTN.Location = new System.Drawing.Point(113, 139);
+            this.bckBTN.Location = new System.Drawing.Point(113, 115);
             this.bckBTN.Name = "bckBTN";
             this.bckBTN.Size = new System.Drawing.Size(101, 34);
             this.bckBTN.TabIndex = 19;
@@ -289,7 +256,7 @@
             // 
             this.postCommentBTN.BackColor = System.Drawing.SystemColors.HotTrack;
             this.postCommentBTN.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.postCommentBTN.Location = new System.Drawing.Point(113, 252);
+            this.postCommentBTN.Location = new System.Drawing.Point(113, 191);
             this.postCommentBTN.Name = "postCommentBTN";
             this.postCommentBTN.Size = new System.Drawing.Size(101, 34);
             this.postCommentBTN.TabIndex = 21;
@@ -297,12 +264,34 @@
             this.postCommentBTN.UseVisualStyleBackColor = false;
             this.postCommentBTN.Click += new System.EventHandler(this.postCommentBTN_Click);
             // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.SystemColors.HotTrack;
+            this.button2.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.button2.Location = new System.Drawing.Point(3, 88);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(101, 34);
+            this.button2.TabIndex = 22;
+            this.button2.Text = "Utwórz wydarzenie";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(23, 246);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(0, 13);
+            this.label9.TabIndex = 23;
+            // 
             // KlientMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1343, 545);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.postCommentBTN);
             this.Controls.Add(this.bckBTN);
             this.Controls.Add(this.label8);
@@ -313,9 +302,6 @@
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.disComm);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.button3);
             this.Controls.Add(this.dateBox);
             this.Controls.Add(this.CategoryBox);
             this.Controls.Add(this.label5);
@@ -342,10 +328,7 @@
         private System.Windows.Forms.TextBox EventName;
         private System.Windows.Forms.TextBox MastermindName;
         private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button disComm;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.ComboBox CityBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -362,5 +345,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button bckBTN;
         private System.Windows.Forms.Button postCommentBTN;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label9;
     }
 }
